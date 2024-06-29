@@ -1,0 +1,96 @@
+.home {
+  .top_button {
+    position: fixed;
+    right: 15px;
+    bottom: 15px;
+    opacity: 75%;
+    color: rgb(138, 43, 226);
+    background-color: transparent;
+    padding: 5px;
+    border: 0;
+  }
+  .top_button.hide {
+    display: none;
+  }
+
+  .home-info {
+    max-width: 1300px;
+
+    .moto_img {
+      max-width: 50vw;
+      max-height: 50vh;
+    }
+
+    .intro__buttons {
+      margin-left: auto;
+      margin-right: auto;
+      display: flex;
+
+      button,
+      a {
+        font-size: 1rem;
+        margin-right: 15px;
+        text-decoration: none;
+        background-color: #fd390e;
+        border: 2px solid #fd390e;
+        color: white;
+        border-radius: 5px;
+        display: flex;
+        align-items: center;
+        padding: 4px 12px;
+        max-width: 180px;
+
+        @media (max-width: 380px) {
+          font-size: 0.65rem;
+        }
+
+        svg {
+          path {
+            color: white;
+          }
+        }
+
+        &:hover {
+          svg {
+            path {
+              color: #fd390e;
+            }
+          }
+          background-color: transparent;
+          color: #fd390e;
+        }
+
+        &:first-child {
+          background-color: transparent;
+          color: #fd390e;
+
+          svg {
+            path {
+              color: #fd390e;
+            }
+          }
+
+          &:hover {
+            svg {
+              path {
+                color: white;
+              }
+            }
+            background-color: #fd390e;
+            color: white;
+            border: 2px solid #fd390e;
+          }
+        }
+      }
+    }
+  }
+  .last_routes {
+    .row {
+      .special_route {
+        @media (min-width: 992px) {
+          padding-bottom: 54px;
+        }
+      }
+    }
+  }
+}

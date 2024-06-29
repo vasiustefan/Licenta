@@ -1,0 +1,68 @@
+.card-ruta {
+  position: relative;
+  border: 2px solid gainsboro;
+  height: 100%;
+
+  .cover-container {
+    background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+      url("../images/cover.avif");
+
+    /* Adjust background properties */
+    background-size: cover; /* Cover the entire container */
+    background-position: center; /* Center the background image */
+    background-repeat: no-repeat; /* Prevent background image from repeating */
+    height: 320px; /* Example height */
+    color: white; /* Example text color */
+    text-align: center; /* Example text alignment */
+    @media (max-width: 1063px) {
+      height: 365px;
+    }
+    @media (max-width: 400px) {
+      height: 415px;
+    }
+  }
+
+  .status {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background-color: black;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 8px;
+    font-size: 14px;
+  }
+
+  .card-image {
+    padding-top: 30px;
+    img {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+
+      @media (max-width: 1050px) {
+        width: 90px;
+        height: 90px;
+      }
+
+      @media (max-width: 600px) {
+        width: 85px;
+        height: 85px;
+      }
+
+      @media (max-width: 450px) {
+        width: 75px;
+        height: 75px;
+      }
+    }
+  }
+  .card_icons_bottom {
+    font-size: 45px;
+    @media (max-width: 650px) {
+      font-size: 42px;
+    }
+    @media (max-width: 400px) {
+      font-size: 40px;
+    }
+  }
+}
