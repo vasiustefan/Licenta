@@ -1,0 +1,29 @@
+.top_button {
+  position: fixed;
+  right: 15px;
+  bottom: 15px;
+  opacity: 75%;
+  color: rgb(138, 43, 226);
+  background-color: transparent;
+  padding: 5px;
+  border: 0;
+}
+.top_button.hide {
+  display: none;
+}
+.modal_button {
+  font-size: 1rem;
+  margin-right: 15px;
+  text-decoration: none;
+  background-color: transparent;
+  color: #fd390e;
+  border: 2px solid #fd390e;
+  border-radius: 5px;
+  align-items: center;
+  padding: 4px 12px;
+  max-width: 180px;
+  &:hover {
+    background-color: #fd390e;
+    color: white;
+  }
+}

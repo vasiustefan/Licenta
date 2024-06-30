@@ -1,4 +1,5 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { FaArrowCircleUp } from "react-icons/fa";
 
 import { Outlet } from "react-router-dom";
 import { Navbar } from "../components/Navbar";
@@ -12,14 +13,27 @@ import { useAppSelector, useAppDispatch } from "../app/hooks";
 import { closeModal, openModal } from "../features/modalSlice";
 import { setUser } from "../features/userSlice";
 
+import "../CSS/Layout.scss";
+
 const Layout = () => {
+  const [top_button, setButtonTop] = useState(false);
   const modal = useAppSelector((state) => state.modal);
   const dispatch = useAppDispatch();
 
-  // const isLoading = false;
-  // if (isLoading) {
-  //   return <div>isLoading</div>;
-  // }
+  const buttonAppear = () => {
+    if (window.scrollY >= 100) {
+      setButtonTop(true);
+    } else {
+      setButtonTop(false);
+    }
+  };
+  window.addEventListener("scroll", buttonAppear);
+  const scrollTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
 
   const handleCloseModal = () => {
     dispatch(closeModal());
@@ -36,6 +50,12 @@ const Layout = () => {
   return (
     <div>
       <Navbar />
+      <button
+        onClick={scrollTop}
+        className={top_button ? "top_button" : "top_button hide"}
+      >
+        <FaArrowCircleUp size="34px" />
+      </button>
       <Outlet />
       <Footer />
 
@@ -45,14 +65,33 @@ const Layout = () => {
         {modal.type === "login" ? <Autentificare /> : null}
 
         {modal.type === "register" || modal.type === "login" ? (
-          <div>
-            <button onClick={() => handleOpenModal("register")}>
-              Inregistre
-            </button>
-            <button onClick={() => handleOpenModal("login")}>
-              Autentificare
-            </button>
-            <button onClick={handleCloseModal}>Close Modal</button>
+          <div className="row">
+            <div className="col-12">
+              <div className="row">
+                <div className="col-9">
+                  <button
+                    className="modal_button me-2 mt-5"
+                    onClick={() => handleOpenModal("register")}
+                  >
+                    Creaza cont
+                  </button>
+                  <button
+                    className="modal_button me-2 mt-5"
+                    onClick={() => handleOpenModal("login")}
+                  >
+                    Autentificare
+                  </button>
+                </div>
+                <div className="col-3">
+                  <button
+                    className="modal_button me-2 mt-5"
+                    onClick={handleCloseModal}
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         ) : null}
       </Modal>

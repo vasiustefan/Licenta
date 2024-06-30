@@ -3,6 +3,8 @@ import logo from "../images/logo.png";
 import husqvarna from "../images/husqvarna.png";
 import honda from "../images/honda.png";
 import redbull from "../images/redbull.jpg";
+import { Link } from "react-router-dom";
+import { Routes } from "../router";
 
 import "../CSS/Footer.scss";
 
@@ -67,7 +69,9 @@ export const Footer = () => {
                 <div className=" col-12 col-sm-6 col-lg-3">
                   <h3>General</h3>
                   <ul>
-                    <li>Pagina principala</li>
+                    <li>
+                      <Link to={Routes.Home}>Pagina principala</Link>
+                    </li>
                     <li>Ture disponibile</li>
                     <li>Contacteaza-ne</li>
                   </ul>

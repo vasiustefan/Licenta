@@ -1,41 +1,19 @@
-import { useEffect, useState } from "react";
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useAppDispatch, useAppSelector } from "../app/hooks";
-import { fetchUser } from "../features/userSlice";
 import moto_image from "../images/mototure0.png";
 
 import { CardRuta } from "../components/CardRuta";
 
 import { Link } from "react-router-dom";
 import { Routes } from "../router";
-import { FaRegUser, FaPlus, FaArrowCircleUp, FaSearch } from "react-icons/fa";
+import { FaRegUser, FaPlus, FaSearch } from "react-icons/fa";
 import { openModal } from "../features/modalSlice";
 
 import "../CSS/Home.scss";
 
 const Home = () => {
-  const [top_button, setButtonTop] = useState(false);
-
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state) => state.user);
-  useEffect(() => {
-    dispatch(fetchUser());
-  }, []);
-
-  const buttonAppear = () => {
-    if (window.scrollY >= 100) {
-      setButtonTop(true);
-    } else {
-      setButtonTop(false);
-    }
-  };
-
-  window.addEventListener("scroll", buttonAppear);
-  const scrollTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
-  };
 
   const handleOpenModal = (type) => {
     dispatch(openModal(type));
@@ -43,14 +21,7 @@ const Home = () => {
 
   return (
     <div className="home">
-      <div className=" d-flex justify-content-center px-3 pt-2 pb-5">
-        <button
-          onClick={scrollTop}
-          className={top_button ? "top_button" : "top_button hide"}
-        >
-          <FaArrowCircleUp size="34px" />
-        </button>
-
+      <div className="d-flex justify-content-center px-3 pt-2 pb-5">
         <div className=" row align-items-center home-info">
           <div className="col-12 col-lg-5">
             <h1 className="display-4 fw-bold mb-4">

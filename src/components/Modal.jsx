@@ -24,7 +24,7 @@ export const Modal = ({ children }) => {
         >
           &times;
         </button>
-        <div className="modal-content-custom">{children}</div>
+        <div className="m-4">{children}</div>
       </div>
     </div>
   );

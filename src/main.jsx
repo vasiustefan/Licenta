@@ -1,13 +1,13 @@
-import React, { Suspense, useEffect } from "react";
+import React, { Suspense } from "react";
 import ReactDOM from "react-dom/client";
 import router from "./router.jsx";
 import { Provider } from "react-redux";
 import store from "./app/store.js";
 import { RouterProvider } from "react-router-dom";
-// Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import "bootstrap/dist/css/bootstrap.min.css";
+import "leaflet/dist/leaflet.css";
 
 import "./CSS/Main.scss";
 

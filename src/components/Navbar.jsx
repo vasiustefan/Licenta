@@ -8,7 +8,9 @@ import { useAppSelector, useAppDispatch } from "../app/hooks";
 import { signOutUser } from "../features/userSlice";
 import { openModal } from "../features/modalSlice";
 
-import { FaRegUser, FaPlus } from "react-icons/fa";
+import { FaRegUser, FaPlus, FaRoute } from "react-icons/fa";
+import { CiLogout } from "react-icons/ci";
+import { MdAccountCircle } from "react-icons/md";
 
 import "../CSS/Navbar.scss";
 
@@ -22,7 +24,7 @@ export const Navbar = () => {
   };
 
   const handleMenu = () => {
-    setShowMenu(!showMenu); // Toggle the showMenu state
+    setShowMenu(!showMenu);
   };
 
   const handleOpenModal = (type) => {
@@ -32,10 +34,9 @@ export const Navbar = () => {
   return (
     <div className="navbar navbar-expand-lg navbar-dark">
       <div className="container">
-        <Link className="navbar-brand" to={Routes.Home}>
+        <Link to={Routes.Home}>
           <img src={logo} alt="MTRoutes" className="navbar-logo" />
         </Link>
-
         <button
           className="navbar-toggler"
           type="button"
@@ -46,7 +47,6 @@ export const Navbar = () => {
         >
           <RxHamburgerMenu className="fs-1" />
         </button>
-
         <div
           className={`collapse navbar-collapse justify-content-end ${
             showMenu ? "show" : ""
@@ -55,24 +55,25 @@ export const Navbar = () => {
         >
           <ul className="navbar-nav">
             <li className="nav-item p-1 m-1">
-              <Link to={Routes.ListaTure} className="nav-link">
-                Ture
-              </Link>
+              <div className="btn btn-outline-danger mt-2">
+                <FaRoute className="me-2" />
+                <Link to={Routes.ListaTure}>Ture</Link>
+              </div>
             </li>
             {user === null ? (
               <>
-                <li className="nav-item link-custom p-1 m-1">
+                <li className="nav-item p-1 m-1">
                   <button
-                    className="btn btn-outline-danger d-flex align-items-center justify-content-center"
+                    className="btn btn-outline-danger d-flex align-items-center justify-content-center mt-2"
                     onClick={() => handleOpenModal("login")}
                   >
                     <FaRegUser className="me-2" />
                     Autentificare
                   </button>
                 </li>
-                <li className="nav-item link-custom p-1 m-1">
+                <li className="nav-item p-1 m-1">
                   <button
-                    className="btn btn-outline-danger d-flex align-items-center justify-content-center"
+                    className="btn btn-outline-danger d-flex align-items-center justify-content-center mt-2"
                     onClick={() => handleOpenModal("register")}
                   >
                     <FaPlus className="me-2" />
@@ -83,14 +84,19 @@ export const Navbar = () => {
             ) : (
               <>
                 <li className="nav-item p-1 m-1">
-                  <label className="nav-link" onClick={handleLogout}>
-                    Logout
-                  </label>
+                  <button
+                    className="btn btn-outline-danger d-flex align-items-center justify-content-center mt-2"
+                    onClick={handleLogout}
+                  >
+                    <CiLogout className="me-2" />
+                    <Link to={Routes.Home}>Deconectare</Link>
+                  </button>
                 </li>
                 <li className="nav-item p-1 m-1">
-                  <Link to={Routes.ContulMeu} className="nav-link">
-                    Contul meu
-                  </Link>
+                  <button className="btn btn-outline-danger d-flex align-items-center justify-content-center mt-2">
+                    <MdAccountCircle className="me-2" />
+                    <Link to={Routes.ContulMeu}>Contul meu</Link>
+                  </button>
                 </li>
               </>
             )}

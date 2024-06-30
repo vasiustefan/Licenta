@@ -1,20 +1,24 @@
 .home {
-  .top_button {
-    position: fixed;
-    right: 15px;
-    bottom: 15px;
-    opacity: 75%;
-    color: rgb(138, 43, 226);
-    background-color: transparent;
-    padding: 5px;
-    border: 0;
-  }
-  .top_button.hide {
-    display: none;
-  }
-
   .home-info {
     max-width: 1300px;
+
+    h1 {
+      @media (max-width: 1250px) {
+        font-size: 1.875rem;
+      }
+      @media (max-width: 460px) {
+        font-size: 1.5rem;
+      }
+    }
+
+    p {
+      @media (max-width: 1250px) {
+        font-size: 0.9rem;
+      }
+      @media (max-width: 460px) {
+        font-size: 0.5rem;
+      }
+    }
 
     .moto_img {
       max-width: 50vw;
