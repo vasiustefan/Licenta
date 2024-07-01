@@ -20,27 +20,33 @@ export const Footer = () => {
             <div className="col-6">
               <div className="row align-items-center justify-content-end">
                 <div className="col-4 footer-icon">
-                  <img
-                    className="img-footer "
-                    src={husqvarna}
-                    alt="logo-husqvarna"
-                  />
+                  <a target="_blank" href="https://www.husqvarna.com/ro/">
+                    <img
+                      className="img-footer "
+                      src={husqvarna}
+                      alt="logo-husqvarna"
+                    />
+                  </a>
                 </div>
                 <div className="col-4 footer-icon">
-                  <img className="img-footer " src={honda} alt="logo-honda" />
+                  <a target="_blank" href="https://honda-moto.ro">
+                    <img className="img-footer " src={honda} alt="logo-honda" />
+                  </a>
                 </div>
                 <div className="col-4 footer-icon">
-                  <img
-                    className="img-footer "
-                    src={redbull}
-                    alt="logo-redbull"
-                  />
+                  <a target="_blank" href="https://www.redbull.com/ro-ro">
+                    <img
+                      className="img-footer "
+                      src={redbull}
+                      alt="logo-redbull"
+                    />
+                  </a>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <div className=" col-12">
+        <div className="footer_info col-12">
           <div className="row">
             <div className="col-12 col-xl-4 mb-3 mb-xl-0">
               <h3>Fii la curent cu ultimele stiri!</h3>
@@ -72,8 +78,9 @@ export const Footer = () => {
                     <li>
                       <Link to={Routes.Home}>Pagina principala</Link>
                     </li>
-                    <li>Ture disponibile</li>
-                    <li>Contacteaza-ne</li>
+                    <li>
+                      <Link to={Routes.ListaTure}>Ture disponibile</Link>
+                    </li>
                   </ul>
                 </div>
                 <div className=" col-12 col-sm-6 col-lg-3">

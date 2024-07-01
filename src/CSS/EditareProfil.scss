@@ -1,11 +1,11 @@
 .editare_profil_form {
   color: white;
   padding: 20px;
-  border: 2px solid rgb(40 36 53);
+  border: 2px solid #282435;
   border-radius: 8px;
-  max-width: 1450px;
+  max-width: 1200px;
   margin: 15px auto;
-  background-color: transparent;
+  background-color: #1a1a2e;
 
   h2,
   h3 {
@@ -16,6 +16,10 @@
   .form-group {
     margin-bottom: 20px;
 
+    option {
+      color: white;
+    }
+
     label {
       display: block;
       margin-bottom: 5px;
@@ -24,8 +28,8 @@
     }
 
     .form-control {
-      color: black;
-      background-color: #2c2c54;
+      color: white;
+      background-color: rgb(40 36 53);
       border: 1px solid #444;
     }
 
@@ -37,44 +41,77 @@
       font-size: 1rem;
       border: 1px solid #ced4da;
       border-radius: 4px;
-      background-color: #2c2c54;
       color: #f1f1f1;
-    }
-  }
-
-  .toggle_private {
-    display: flex;
-    align-items: center;
-    margin-top: 10px;
-
-    svg {
-      cursor: pointer;
-    }
-
-    span {
-      margin-left: 10px;
-      font-size: 0.9rem;
-      color: gainsboro;
     }
   }
 
   .btn-primary {
     background-color: #fd390e;
-    border-color: #fd390e;
+    border: 2px solid #fd390e;
     color: white;
     &:hover {
       background-color: transparent;
-      color: #fd390e;
+      color: white;
+      border: 2px solid #fd390e;
     }
   }
 
   .btn-secondary {
-    background-color: #6c757d;
-    border-color: #6c757d;
+    background-color: #fd390e;
     color: white;
+    border: 2px solid #fd390e;
     &:hover {
       background-color: transparent;
-      color: #6c757d;
+      color: white;
+      border: 2px solid #fd390e;
+    }
+  }
+
+  .profile_picture_container {
+    background-color: #282435;
+    border: 1px solid #444;
+    padding: 20px;
+    border-radius: 8px;
+    .avatar {
+      width: 100%;
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      margin-bottom: 20px;
+    }
+    .btn-warning {
+      background-color: #fd390e;
+      border: 2px solid #fd390e;
+      color: white;
+      &:hover {
+        background-color: transparent;
+        color: white;
+        border: 2px solid #fd390e;
+      }
+    }
+
+    .btn-danger {
+      background-color: #dc3545;
+      border: 2px solid #fd390e;
+      color: white;
+      &:hover {
+        background-color: transparent;
+        color: white;
+        border: 2px solid #fd390e;
+      }
+    }
+  }
+  @media (max-width: 450px) {
+    .form-group {
+      label,
+      input,
+      textarea {
+        font-size: 0.8rem;
+      }
+    }
+    .btn {
+      font-size: 0.8rem;
+      padding: 5px;
     }
   }
 }

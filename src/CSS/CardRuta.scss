@@ -1,27 +1,26 @@
 .card-ruta {
   position: relative;
   border: 2px solid gainsboro;
-  height: 100%;
+  height: fit-content;
+  width: 100%;
+  cursor: pointer;
 
   .cover-container {
     background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
       url("../images/cover.avif");
-
-    /* Adjust background properties */
-    background-size: cover; /* Cover the entire container */
-    background-position: center; /* Center the background image */
-    background-repeat: no-repeat; /* Prevent background image from repeating */
-    height: 320px; /* Example height */
-    color: white; /* Example text color */
-    text-align: center; /* Example text alignment */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 320px;
+    color: white;
+    text-align: center;
     @media (max-width: 1063px) {
-      height: 365px;
+      height: 290px;
     }
-    @media (max-width: 400px) {
-      height: 415px;
+    @media (max-width: 600px) {
+      display: none !important;
     }
   }
-
   .status {
     position: absolute;
     top: 12px;
@@ -44,25 +43,28 @@
         width: 90px;
         height: 90px;
       }
+    }
+  }
+  @media (max-width: 600px) {
+    background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+      url("../images/cover.avif");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    justify-content: space-evenly;
+  }
 
-      @media (max-width: 600px) {
-        width: 85px;
-        height: 85px;
-      }
-
-      @media (max-width: 450px) {
-        width: 75px;
-        height: 75px;
+  .card_parameters {
+    p {
+      @media (max-width: 650px) {
+        font-size: 0.8rem;
       }
     }
   }
   .card_icons_bottom {
-    font-size: 45px;
+    font-size: 2rem;
     @media (max-width: 650px) {
-      font-size: 42px;
-    }
-    @media (max-width: 400px) {
-      font-size: 40px;
+      font-size: 1.7rem;
     }
   }
 }

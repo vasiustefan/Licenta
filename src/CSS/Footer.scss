@@ -13,13 +13,19 @@
 
   .img-footer {
     width: 60px;
+    @media (max-width: 1120px) {
+      width: 50px;
+    }
 
     @media (max-width: 540px) {
       width: 40px;
     }
 
-    @media (max-width: 400px) {
-      width: 26px;
+    @media (max-width: 435px) {
+      width: 30px;
+    }
+    @media (max-width: 375px) {
+      width: 20px;
     }
   }
 
@@ -34,31 +40,39 @@
     border: 1px solid rgb(151, 151, 151);
     border-radius: 8px;
     padding: 4px;
-
     .newsletter-input {
       background-color: transparent;
-
       outline: none;
-
       &:focus,
       &:active {
         outline: none;
       }
     }
-
     .newsletter-btn {
       background: rgb(253 86 49);
       padding: 4px 6px;
       border-radius: 4px;
-
       svg {
         path {
           color: white;
         }
       }
-
       &:hover {
         background: rgb(243, 50, 43);
+      }
+    }
+  }
+}
+@media (max-width: 1480px) {
+  .footer {
+    .footer_info {
+      h3,
+      p,
+      input,
+      button,
+      li,
+      a {
+        font-size: 0.8rem;
       }
     }
   }
