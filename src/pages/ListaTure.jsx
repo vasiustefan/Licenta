@@ -3,8 +3,12 @@ import { CardRuta } from "../components/CardRuta";
 import "../CSS/ListaTure.scss";
 import biker1 from "../images/biker.avif";
 import biker2 from "../images/logo.png";
+import { useAppDispatch, useAppSelector } from "../app/hooks";
+import { createNewTura, fetchAllTure } from "../features/tureSlice";
 
 const ListaTure = () => {
+  const dispatch = useAppDispatch();
+  const { ture } = useAppSelector((state) => state.ture);
   const [showFilters, setShowFilters] = useState(false);
 
   const [filters, setFilters] = useState({
@@ -132,8 +136,71 @@ const ListaTure = () => {
     setShowFilters(false);
   };
 
+  const handleAddTura = () => {
+    dispatch(
+      createNewTura({
+        name: "tura1",
+        distanta: "155",
+      })
+    );
+  };
+
+  useEffect(() => {
+    dispatch(fetchAllTure());
+  }, []);
+
+  console.log(ture);
+
   return (
     <div className="lista_ture">
+      <h1>lista ture</h1>
+      <br />
+      <h1>adauga tura</h1>
+      <div>
+        <input type="text" placeholder="name" />
+        <input type="text" placeholder="distanta" />
+        <button onClick={handleAddTura}>add tura</button>
+      </div>
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
       <button
         className="btn btn-primary filter-toggle"
         onClick={() => setShowFilters(!showFilters)}

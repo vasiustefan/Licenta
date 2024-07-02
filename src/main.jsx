@@ -6,6 +6,7 @@ import store from "./app/store.js";
 import { RouterProvider } from "react-router-dom";
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "leaflet/dist/leaflet.css";
 
@@ -21,10 +22,21 @@ const firebaseConfig = {
   measurementId: "G-X5VNFC8K95",
 };
 
+const firebaseConfigTest = {
+  apiKey: "AIzaSyA1gNceo1Wl4kMPmZHP7Oj-MwhGClTmsJQ",
+  authDomain: "test-licenta-edc31.firebaseapp.com",
+  projectId: "test-licenta-edc31",
+  storageBucket: "test-licenta-edc31.appspot.com",
+  messagingSenderId: "403393777974",
+  appId: "1:403393777974:web:cf5aa35f00b648e5a0e397",
+  measurementId: "G-Z5BENQ7Z5V",
+};
+
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfigTest);
+const db = getFirestore(app);
 const auth = getAuth(app);
-export { app, auth };
+export { app, auth, db };
 
 export const App = () => {
   return (
