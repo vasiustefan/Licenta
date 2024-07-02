@@ -9,6 +9,9 @@ import { Routes } from "../router";
 import { FaRegUser, FaPlus, FaSearch } from "react-icons/fa";
 import { openModal } from "../features/modalSlice";
 
+import { useEffect } from "react";
+import { fetchAllTure } from "../features/tureSlice";
+
 import "../CSS/Home.scss";
 
 const Home = () => {
@@ -18,6 +21,9 @@ const Home = () => {
   const handleOpenModal = (type) => {
     dispatch(openModal(type));
   };
+  useEffect(() => {
+    dispatch(fetchAllTure());
+  }, []);
 
   return (
     <div className="home">

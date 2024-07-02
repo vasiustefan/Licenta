@@ -10,8 +10,11 @@ import {
 import axios from "axios";
 import L from "leaflet";
 import "../CSS/AdaugaTure.scss";
+import { createNewTura } from "../features/tureSlice";
+import { useAppDispatch } from "../app/hooks";
 
 const AdaugaTure = () => {
+  const dispatch = useAppDispatch();
   const [departureCity, setDepartureCity] = useState("");
   const [arrivalCity, setArrivalCity] = useState("");
   const [intermediateCities, setIntermediateCities] = useState([""]);
@@ -19,6 +22,19 @@ const AdaugaTure = () => {
   const [route, setRoute] = useState([]);
   const [distance, setDistance] = useState(0);
   const [cost, setCost] = useState(0);
+  const [dataRoute, setDataRoute] = useState({
+    part_type: "",
+    time: "",
+    start_place: "",
+  });
+
+  const handleChangeForm = (e) => {
+    const { name, value } = e.target;
+    setDataRoute((prevDataRoute) => ({
+      ...prevDataRoute,
+      [name]: value,
+    }));
+  };
 
   const handleCityChange = (e, index) => {
     const newCities = [...intermediateCities];
@@ -101,8 +117,14 @@ const AdaugaTure = () => {
     }
   }, [departureCity, arrivalCity, intermediateCities]);
 
-  const handleSubmit = (e) => {
+  const handleAddTura = (e) => {
     e.preventDefault();
+    dispatch(createNewTura(dataRoute));
+    setDataRoute({
+      part_type: "",
+      time: "",
+      start_place: "",
+    });
   };
 
   const labels = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -116,6 +138,7 @@ const AdaugaTure = () => {
     });
   };
 
+  console.log({ dataRoute });
   return (
     <div>
       <div className="adauga_tura_form mt-5">
@@ -125,10 +148,17 @@ const AdaugaTure = () => {
         </p>
 
         <h3>Informații generale</h3>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleAddTura}>
           <div className="form-group mb-3">
             <label htmlFor="tourType">Tipul turei</label>
-            <select className="form-control" id="tourType" required="req">
+            <select
+              className="form-control"
+              name="part_type"
+              id="tourType"
+              value={dataRoute.part_type}
+              onChange={handleChangeForm}
+              required="req"
+            >
               <option>Participare liberă</option>
               <option>Participare cu înscriere</option>
             </select>
@@ -140,7 +170,10 @@ const AdaugaTure = () => {
             <input
               type="datetime-local"
               className="form-control"
+              name="time"
               id="startDateTime"
+              value={dataRoute.time}
+              onChange={handleChangeForm}
               required="req"
             />
           </div>
@@ -151,6 +184,9 @@ const AdaugaTure = () => {
               className="form-control"
               id="meetingPlace"
               placeholder="Introdu adresa locului de întâlnire."
+              name="start_place"
+              value={dataRoute.start_place}
+              onChange={handleChangeForm}
               required="req"
             />
           </div>
@@ -193,6 +229,7 @@ const AdaugaTure = () => {
               required="req"
             />
           </div>
+          <button>Apasa</button>
         </form>
       </div>
 
@@ -247,7 +284,7 @@ const AdaugaTure = () => {
 
       <div className="traseu_form mt-5">
         <h2>Traseul</h2>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleAddTura}>
           <div className="form-group mb-3">
             <label htmlFor="departureCity">Orașul de plecare</label>
             <input

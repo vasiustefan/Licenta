@@ -15,6 +15,7 @@ import "./CSS/Main.scss";
 const firebaseConfig = {
   apiKey: "AIzaSyAlfRooEZ-AR9UJRi8mLpTAOKDo3-rnFAA",
   authDomain: "licenta-7864b.firebaseapp.com",
+  databaseURL: "https://licenta-7864b-default-rtdb.firebaseio.com",
   projectId: "licenta-7864b",
   storageBucket: "licenta-7864b.appspot.com",
   messagingSenderId: "414614077179",
@@ -22,18 +23,7 @@ const firebaseConfig = {
   measurementId: "G-X5VNFC8K95",
 };
 
-const firebaseConfigTest = {
-  apiKey: "AIzaSyA1gNceo1Wl4kMPmZHP7Oj-MwhGClTmsJQ",
-  authDomain: "test-licenta-edc31.firebaseapp.com",
-  projectId: "test-licenta-edc31",
-  storageBucket: "test-licenta-edc31.appspot.com",
-  messagingSenderId: "403393777974",
-  appId: "1:403393777974:web:cf5aa35f00b648e5a0e397",
-  measurementId: "G-Z5BENQ7Z5V",
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfigTest);
+const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 export { app, auth, db };

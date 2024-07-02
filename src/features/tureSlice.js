@@ -26,12 +26,9 @@ export const fetchAllTure = createAsyncThunk("ture/fetchAll", async () => {
 
 export const createNewTura = createAsyncThunk(
   "ture/create",
-  async ({ name, distanta }) => {
+  async (dataRoute) => {
     try {
-      await addDoc(collection(db, "listaTure"), {
-        name: name,
-        distanta: distanta,
-      });
+      await addDoc(collection(db, "listaTure"), dataRoute);
 
       console.log("suc");
 
