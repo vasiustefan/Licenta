@@ -30,8 +30,6 @@ export const createNewTura = createAsyncThunk(
     try {
       await addDoc(collection(db, "listaTure"), dataRoute);
 
-      console.log("suc");
-
       alert("success");
     } catch (err) {
       console.error(err);

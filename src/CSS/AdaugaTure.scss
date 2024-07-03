@@ -1,6 +1,7 @@
 option {
   color: black;
 }
+
 .adauga_tura_form {
   color: white;
   padding: 20px;
@@ -38,6 +39,11 @@ option {
       border: 1px solid #ced4da;
       border-radius: 4px;
     }
+
+    .form-control[readonly] {
+      background-color: #e9ecef;
+      opacity: 1;
+    }
   }
 
   .input-group-append .input-group-text {
@@ -46,6 +52,7 @@ option {
     border-left: 0;
   }
 }
+
 .traseu_form {
   color: white;
   padding: 20px;
@@ -61,6 +68,7 @@ option {
 
   .form-group {
     margin-bottom: 20px;
+
     label {
       display: block;
       margin-bottom: 5px;
@@ -89,14 +97,6 @@ option {
       background-color: transparent;
     }
   }
-
-  .map {
-    height: 400px;
-    margin-bottom: 20px;
-    border-radius: 8px;
-    overflow: hidden;
-  }
-
   .route-info {
     margin-bottom: 20px;
     text-align: center;
@@ -106,22 +106,30 @@ option {
       margin: 5px 0;
     }
   }
+}
 
-  .btn_submit {
-    width: 100%;
-    padding: 15px;
-    background-color: #fd390e;
-    border: 2px solid #fd390e;
-    color: white;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s;
+.map {
+  height: 400px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  overflow: hidden;
+}
 
-    &:hover {
-      background-color: transparent;
-    }
+.btn_submit, button {
+  width: 100%;
+  padding: 15px;
+  background-color: #fd390e;
+  border: 2px solid #fd390e;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+
+  &:hover {
+    background-color: transparent;
   }
 }
+
 .cerinte_participare_form {
   background-color: transparent;
   padding: 20px;
@@ -162,6 +170,11 @@ option {
       font-size: 1rem;
       border: 1px solid #ced4da;
       border-radius: 4px;
+    }
+
+    .form-control[readonly] {
+      background-color: #e9ecef;
+      opacity: 1;
     }
   }
 
