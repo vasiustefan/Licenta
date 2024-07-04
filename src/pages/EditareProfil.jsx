@@ -20,18 +20,17 @@ const EditareProfil = () => {
     cmc: "",
     experience: "",
     extraEquipment: "",
+    memberSince: "",
   });
 
   useEffect(() => {
     if (user && user.uid && !user.name) {
-      console.log("Fetching user data for UID:", user.uid);
       dispatch(fetchUser(user.uid));
     }
   }, [dispatch, user]);
 
   useEffect(() => {
     if (user && user.uid) {
-      console.log("User data available:", user);
       setProfile({
         email: user.email || "",
         name: user.name || "",
@@ -42,6 +41,7 @@ const EditareProfil = () => {
         cmc: user.cmc || "",
         experience: user.experience || "",
         extraEquipment: user.extraEquipment || "",
+        memberSince: user.memberSince || "",
       });
     }
   }, [user]);
@@ -76,6 +76,17 @@ const EditareProfil = () => {
     }
   };
 
+  const getFormattedDate = (dateString) => {
+    if (!dateString) return "Unknown Date";
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return "Invalid Date"; // Check for invalid date
+    const day = date.getDate();
+    const month = date.toLocaleString("default", { month: "long" });
+    const year = date.getFullYear();
+    return `${day} ${month} ${year}`;
+  };
+
+  profile.memberSince = getFormattedDate(profile.memberSince);
   return (
     <div className="container editare_profil_form my-4 p-4 rounded">
       <h2 className="text-center mb-4">Editare date cont</h2>
@@ -183,6 +194,17 @@ const EditareProfil = () => {
                 value={profile.extraEquipment}
                 onChange={handleChange}
               ></textarea>
+            </div>
+            <div className="form-group mb-3">
+              <label htmlFor="memberSince">Membru din</label>
+              <input
+                type="text"
+                className="form-control"
+                id="memberSince"
+                name="memberSince"
+                value={profile.memberSince}
+                disabled
+              />
             </div>
             <div className="form-group d-flex justify-content-between">
               <button type="submit" className="btn btn-primary">

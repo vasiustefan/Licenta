@@ -37,12 +37,22 @@ const ContulMeu = () => {
     return <div>Loading...</div>;
   }
 
+  const getFormattedDate = (dateString) => {
+    if (!dateString) return "Unknown Date";
+    const date = new Date(dateString);
+    if (isNaN(date)) return "Invalid Date";
+    const day = date.getDate();
+    const month = date.toLocaleString("default", { month: "long" });
+    const year = date.getFullYear();
+    return `${day} ${month} ${year}`;
+  };
   return (
     <div className="contul_meu_container">
       <div className="user_info">
         <div className="profile_picture">
           <FaMotorcycle size="100%" color="#fd390e" />
         </div>
+        <span>Membru din: {getFormattedDate(user.memberSince)}</span>
       </div>
 
       <div className="user_bio">
