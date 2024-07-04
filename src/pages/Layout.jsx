@@ -20,6 +20,10 @@ const Layout = () => {
   const modal = useAppSelector((state) => state.modal);
   const dispatch = useAppDispatch();
 
+  useEffect(() => {
+    dispatch(setUser());
+  }, [dispatch]);
+
   const buttonAppear = () => {
     if (window.scrollY >= 100) {
       setButtonTop(true);

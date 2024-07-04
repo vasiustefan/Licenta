@@ -4,7 +4,8 @@ import {
   signInWithEmailAndPassword,
   signOut,
 } from "firebase/auth";
-import { auth } from "../main";
+import { doc, setDoc, getDoc } from "firebase/firestore";
+import { auth, db } from "../main";
 
 const initialState = {
   loading: false,
@@ -21,8 +22,13 @@ export const signInUser = createAsyncThunk(
       password
     );
 
-    localStorage.setItem("user", JSON.stringify(userCredential.user));
-    return userCredential.user;
+    const user = {
+      uid: userCredential.user.uid,
+      email: userCredential.user.email,
+    };
+
+    localStorage.setItem("user", JSON.stringify(user));
+    return user;
   }
 );
 
@@ -34,11 +40,35 @@ export const registerUser = createAsyncThunk(
       email,
       password
     );
+    const userRef = doc(db, "users", userCredential.user.uid);
+    await setDoc(userRef, {
+      email: userCredential.user.email,
+      name: "",
+      phone: "",
+      city: "",
+      birthYear: "",
+      moto: "",
+      cmc: "",
+      experience: "",
+      extraEquipment: "",
+      memberSince: new Date().toISOString(),
+    });
 
-    localStorage.setItem("user", JSON.stringify(userCredential.user));
-    return userCredential.user;
+    const user = {
+      uid: userCredential.user.uid,
+      email: userCredential.user.email,
+    };
+
+    localStorage.setItem("user", JSON.stringify(user));
+    return user;
   }
 );
+
+export const fetchUser = createAsyncThunk("user/fetchUser", async (uid) => {
+  const userRef = doc(db, "users", uid);
+  const userDoc = await getDoc(userRef);
+  return { uid, ...userDoc.data() };
+});
 
 export const signOutUser = createAsyncThunk("user/signOut", async () => {
   localStorage.removeItem("user");
@@ -52,11 +82,7 @@ const userSlice = createSlice({
     setUser: (state) => {
       const localStorageData = localStorage.getItem("user");
       if (localStorageData) {
-        const user = JSON.parse(localStorageData);
-
-        state.user = {
-          email: user.email,
-        };
+        state.user = JSON.parse(localStorageData);
         state.error = "";
       } else {
         state.user = null;
@@ -101,6 +127,19 @@ const userSlice = createSlice({
       state.user = action.payload;
     });
     builder.addCase(registerUser.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.error.message;
+      state.user = null;
+    });
+
+    builder.addCase(fetchUser.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(fetchUser.fulfilled, (state, action) => {
+      state.loading = false;
+      state.user = action.payload;
+    });
+    builder.addCase(fetchUser.rejected, (state, action) => {
       state.loading = false;
       state.error = action.error.message;
       state.user = null;

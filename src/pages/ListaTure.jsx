@@ -1,71 +1,31 @@
 import { useState, useEffect } from "react";
 import { CardRuta } from "../components/CardRuta";
 import "../CSS/ListaTure.scss";
-import biker1 from "../images/biker.avif";
-import biker2 from "../images/logo.png";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { fetchAllTure } from "../features/tureSlice";
 
 const ListaTure = () => {
   const dispatch = useAppDispatch();
-  const { ture } = useAppSelector((state) => state.ture);
+  const { ture, loading, error } = useAppSelector((state) => state.ture);
   const [showFilters, setShowFilters] = useState(false);
+  const [filteredRoutes, setFilteredRoutes] = useState([]);
 
   const [filters, setFilters] = useState({
     city: "",
-    distanceMin: null,
-    distanceMax: null,
-    cmcMin: null,
-    cmcMax: null,
-    ageMin: null,
-    ageMax: null,
+    distanceMin: "",
+    distanceMax: "",
+    cmcMin: "",
+    cmcMax: "",
+    ageMin: "",
+    ageMax: "",
     experience: "any",
     costMin: 0,
     costMax: 7000,
   });
 
-  const routes = [
-    {
-      id: 1,
-      userAvatar: { biker1 },
-      user: "Andrei_andrei",
-      date: "June 12, 2024",
-      from: "Bucuresti",
-      to: "Focsani",
-      waypoints: ["Targu secuiesc"],
-      distance: 85,
-      participants: 1,
-      cost: 500,
-      duration: "2 zile",
-      difficulty: "Mediu",
-      age: "18",
-      cmc: "600",
-      status: "Închisă",
-    },
-    {
-      id: 2,
-      userAvatar: { biker2 },
-      user: "Babanu",
-      date: "June 12, 2024",
-      from: "Bucuresti",
-      to: "Focsani",
-      waypoints: ["Targu secuiesc"],
-      distance: 85,
-      participants: 1,
-      cost: 500,
-      duration: "2 zile",
-      difficulty: "Mediu",
-      age: "15",
-      cmc: "500",
-      status: "Închisă",
-    },
-  ];
-
-  const [filteredRoutes, setFilteredRoutes] = useState(routes);
-
   useEffect(() => {
-    setFilteredRoutes(routes);
-  }, []);
+    dispatch(fetchAllTure());
+  }, [dispatch]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -82,14 +42,18 @@ const ListaTure = () => {
   };
 
   const handleApplyFilters = () => {
-    let filtered = routes;
+    let filtered = ture;
 
     if (filters.city) {
       filtered = filtered.filter(
         (route) =>
-          route.from.toLowerCase().includes(filters.city.toLowerCase()) ||
-          route.to.toLowerCase().includes(filters.city.toLowerCase()) ||
-          route.waypoints.some((city) =>
+          route.departureCity
+            .toLowerCase()
+            .includes(filters.city.toLowerCase()) ||
+          route.arrivalCity
+            .toLowerCase()
+            .includes(filters.city.toLowerCase()) ||
+          route.intermediateCities.some((city) =>
             city.toLowerCase().includes(filters.city.toLowerCase())
           )
       );
@@ -98,8 +62,7 @@ const ListaTure = () => {
     if (filters.distanceMin || filters.distanceMax) {
       filtered = filtered.filter(
         (route) =>
-          route.distance >= filters.distanceMin &&
-          route.distance <= filters.distanceMax
+          route.km >= filters.distanceMin && route.km <= filters.distanceMax
       );
     }
 
@@ -114,14 +77,14 @@ const ListaTure = () => {
     if (filters.ageMin || filters.ageMax) {
       filtered = filtered.filter(
         (route) =>
-          parseInt(route.age) >= filters.ageMin &&
-          parseInt(route.age) <= filters.ageMax
+          parseInt(route.minAge) >= filters.ageMin &&
+          parseInt(route.minAge) <= filters.ageMax
       );
     }
 
     if (filters.experience !== "any") {
       filtered = filtered.filter(
-        (route) => route.experience === filters.experience
+        (route) => route.minExperience === filters.experience
       );
     }
 
@@ -137,10 +100,8 @@ const ListaTure = () => {
   };
 
   useEffect(() => {
-    dispatch(fetchAllTure());
-  }, []);
-
-  console.log(ture);
+    setFilteredRoutes(ture);
+  }, [ture]);
 
   return (
     <div className="lista_ture">
@@ -226,10 +187,10 @@ const ListaTure = () => {
             value={filters.experience}
             onChange={handleChange}
           >
-            <option value="any">Oricare</option>
-            <option value="incepator">Începător</option>
-            <option value="mediu">Mediu</option>
-            <option value="avansat">Avansat</option>
+            <option value="">-- Alege o opțiune --</option>
+            <option value="Începător">Începător</option>
+            <option value="Intermediar">Intermediar</option>
+            <option value="Avansat">Avansat</option>
           </select>
         </div>
         <div className="filter-group mb-3">
@@ -263,12 +224,17 @@ const ListaTure = () => {
       <div className="route_list p-5">
         <h3 className="mb-3">Ture disponibile</h3>
         <div className="d-flex flex-wrap gap-2">
-          {filteredRoutes.map((route) => (
-            <CardRuta key={route.id} route={route} isSpecial={false} />
-          ))}
+          {loading && <p>Loading...</p>}
+          {error && <p>Error: {error}</p>}
+          {!loading && filteredRoutes.length === 0 && <p>No tours found</p>}
+          {!loading &&
+            filteredRoutes.map((route) => (
+              <CardRuta key={route.id} route={route} isSpecial={false} />
+            ))}
         </div>
       </div>
     </div>
   );
 };
+
 export default ListaTure;

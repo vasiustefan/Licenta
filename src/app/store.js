@@ -6,8 +6,12 @@ import tureReducer from "../features/tureSlice";
 const store = configureStore({
   reducer: {
     user: userReducer,
-    modal: modalReducer,
     ture: tureReducer,
+    modal: modalReducer,
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: false,
+    }),
 });
 export default store;

@@ -1,73 +1,87 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { db } from "../main";
+import { useDispatch, useSelector } from "react-redux";
+import { doc, updateDoc } from "firebase/firestore"; // Import Firestore functions
 import bikerImg from "../images/biker.avif";
 import "../CSS/EditareProfil.scss";
+import { fetchUser } from "../features/userSlice";
 
 const EditareProfil = () => {
+  const dispatch = useDispatch();
+  const user = useSelector((state) => state.user.user); // Get the current user from the Redux store
+
   const [profile, setProfile] = useState({
-    img: bikerImg,
-    username: "vasilestefan",
-    email: "gr8_stefan@yahoo.com",
-    name: "BaBanu",
-    phone: "0746383404",
-    city: "Sibiu",
-    birthYear: 2000,
-    moto: "Honda Shadow",
-    cmc: 600,
-    experience: "Începător",
-    extraEquipment: "Nu detin echipament extra",
+    email: "",
+    name: "",
+    phone: "",
+    city: "",
+    birthYear: "",
+    moto: "",
+    cmc: "",
+    experience: "",
+    extraEquipment: "",
   });
+
+  useEffect(() => {
+    if (user && user.uid && !user.name) {
+      console.log("Fetching user data for UID:", user.uid);
+      dispatch(fetchUser(user.uid));
+    }
+  }, [dispatch, user]);
+
+  useEffect(() => {
+    if (user && user.uid) {
+      console.log("User data available:", user);
+      setProfile({
+        email: user.email || "",
+        name: user.name || "",
+        phone: user.phone || "",
+        city: user.city || "",
+        birthYear: user.birthYear || "",
+        moto: user.moto || "",
+        cmc: user.cmc || "",
+        experience: user.experience || "",
+        extraEquipment: user.extraEquipment || "",
+      });
+    }
+  }, [user]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setProfile((prevProfile) => ({ ...prevProfile, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission logic here
-    setProfile((prevProfile) => ({
-      ...prevProfile,
-      username: profile.username,
-      email: profile.email,
-      name: profile.name,
-      phone: profile.phone,
-      city: profile.city,
-      birthYear: profile.birthYear,
-      moto: profile.moto,
-      cmc: profile.cmc,
-      experience: profile.experience,
-      extraEquipment: profile.extraEquipment,
-    }));
-    console.log("Profile updated:", profile);
-  };
-  const handleImageChange = (e) => {
-    if (e.target.files && e.target.files[0]) {
-      const img = URL.createObjectURL(e.target.files[0]);
-      setProfile((prevProfile) => ({ ...prevProfile, img }));
+    if (!user || !user.uid) {
+      console.error("User is not logged in or user ID is undefined");
+      return;
+    }
+    try {
+      const userDocRef = doc(db, "users", user.uid);
+      await updateDoc(userDocRef, {
+        name: profile.name,
+        phone: profile.phone,
+        city: profile.city,
+        birthYear: profile.birthYear,
+        moto: profile.moto,
+        cmc: profile.cmc,
+        experience: profile.experience,
+        extraEquipment: profile.extraEquipment,
+      });
+
+      console.log("Profile updated:", profile);
+    } catch (error) {
+      console.error("Error updating profile:", error);
     }
   };
 
-  const triggerFileInput = () => {
-    document.getElementById("avatarInput").click();
-  };
   return (
     <div className="container editare_profil_form my-4 p-4 rounded">
       <h2 className="text-center mb-4">Editare date cont</h2>
       <div className="row">
         <div className="col-md-8">
           <form onSubmit={handleSubmit}>
-            <div className="form-group mb-3">
-              <label htmlFor="username">Username</label>
-              <input
-                type="text"
-                className="form-control"
-                id="username"
-                name="username"
-                value={profile.username}
-                onChange={handleChange}
-                disabled
-              />
-            </div>
             <div className="form-group mb-3">
               <label htmlFor="email">Adresa de email</label>
               <input
@@ -183,16 +197,11 @@ const EditareProfil = () => {
         <div className="col-md-4">
           <div className="profile_picture_container text-center">
             <div className="d-flex flex-column align-items-center">
-              <img src={profile.img} alt="Avatar" className="avatar" />
+              <img src={bikerImg} alt="Avatar" className="avatar" />
               <label htmlFor="name">{profile.name}</label>
             </div>
-            <input
-              type="file"
-              id="avatarInput"
-              style={{ display: "none" }}
-              onChange={handleImageChange}
-            />
-            <button className="btn btn-warning my-3" onClick={triggerFileInput}>
+            <input type="file" id="avatarInput" style={{ display: "none" }} />
+            <button className="btn btn-warning my-3">
               Schimbă-ți avatarul
             </button>
           </div>

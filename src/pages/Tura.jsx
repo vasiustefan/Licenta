@@ -9,6 +9,8 @@ import {
 } from "react-leaflet";
 import axios from "axios";
 import L from "leaflet";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../main";
 import "../CSS/Tura.scss"; // Ensure this file is styled appropriately
 
 const Tura = () => {
@@ -16,39 +18,49 @@ const Tura = () => {
   const [route, setRoute] = useState(null);
   const [points, setPoints] = useState([]);
   const [routeCoordinates, setRouteCoordinates] = useState([]);
+  const [organizer, setOrganizer] = useState(null);
 
   useEffect(() => {
-    // Fetch route details from API
     const fetchRoute = async () => {
       try {
-        const response = await axios.get(`/api/routes/${id}`);
-        setRoute(response.data);
+        const routeDoc = await getDoc(doc(db, "ture", id));
+        if (routeDoc.exists()) {
+          const routeData = routeDoc.data();
+          setRoute(routeData);
 
-        const allCities = [
-          response.data.from,
-          ...response.data.waypoints,
-          response.data.to,
-        ];
-
-        const pointsPromises = allCities.map((city) => fetchGeocoding(city));
-        const newPoints = await Promise.all(pointsPromises);
-        const validPoints = newPoints.filter((point) => point !== null);
-
-        if (validPoints.length >= 2) {
-          setPoints(validPoints);
-          let totalRoute = [];
-          for (let i = 0; i < validPoints.length - 1; i++) {
-            const result = await fetchRouteSegment(
-              validPoints[i],
-              validPoints[i + 1]
-            );
-            if (result) {
-              totalRoute = totalRoute.concat(result.routeCoordinates);
-            }
+          const userDoc = await getDoc(doc(db, "users", routeData.createdBy));
+          if (userDoc.exists()) {
+            setOrganizer(userDoc.data());
           }
-          setRouteCoordinates(totalRoute);
+
+          const allCities = [
+            routeData.departureCity,
+            ...routeData.intermediateCities,
+            routeData.arrivalCity,
+          ];
+
+          const pointsPromises = allCities.map((city) => fetchGeocoding(city));
+          const newPoints = await Promise.all(pointsPromises);
+          const validPoints = newPoints.filter((point) => point !== null);
+
+          if (validPoints.length >= 2) {
+            setPoints(validPoints);
+            let totalRoute = [];
+            for (let i = 0; i < validPoints.length - 1; i++) {
+              const result = await fetchRouteSegment(
+                validPoints[i],
+                validPoints[i + 1]
+              );
+              if (result) {
+                totalRoute = totalRoute.concat(result.routeCoordinates);
+              }
+            }
+            setRouteCoordinates(totalRoute);
+          } else {
+            console.error("Not enough valid points to calculate route.");
+          }
         } else {
-          console.error("Not enough valid points to calculate route.");
+          console.error("Route not found.");
         }
       } catch (error) {
         console.error("Error fetching route details:", error);
@@ -100,18 +112,33 @@ const Tura = () => {
     });
   };
 
+  const capitalizeCity = (city) => {
+    if (!city) return "";
+    return city.charAt(0).toUpperCase() + city.slice(1).toLowerCase();
+  };
+
   if (!route) {
     return <div>Loading...</div>;
   }
 
   return (
     <div className="container tura-details my-4 p-4 rounded">
-      <h2>{`Tura #${route.id} - ${route.from} → ${route.to}`}</h2>
+      <div className="d-flex align-items-center justify-content-center">
+        <h2 className="mx-2">Traseu: </h2>
+        <h2>{capitalizeCity(route.departureCity)}</h2>
+        <h2 className="mx-2">-&gt;</h2>
+        {route.intermediateCities &&
+          route.intermediateCities.map((city, index) => (
+            <h2 key={index}>{`${capitalizeCity(city)} -&gt;`}</h2>
+          ))}
+        <h2 className="mx-2">{capitalizeCity(route.arrivalCity)}</h2>
+      </div>
+
       <div className="map-container">
         <MapContainer
           center={[46.77, 23.59]}
           zoom={6}
-          scrollWheelZoom={false}
+          scrollWheelZoom={true}
           className="map mb-4"
         >
           <TileLayer
@@ -138,23 +165,25 @@ const Tura = () => {
       </div>
       <div className="details">
         <h3>Detalii de participare</h3>
-        <p>Distanță aproximativă: {route.distance} km</p>
-        <p>Durata: {route.duration}</p>
+        <p>Distanță aproximativă: {route.km} km</p>
+        <p>
+          Durata: {route.duration} {route.duration === 1 ? "zi" : "zile"}
+        </p>
         <p>Cost estimativ: {route.cost} RON</p>
-        <p>Viteza de croazieră: {route.speed}</p>
-        <p>Experiență necesară: {route.experience}</p>
-        <p>Vârstă necesară: {route.age}</p>
-        <p>CMC necesar: {route.cmc}</p>
+        <p>Viteza de croazieră: {route.cruisingSpeed} km/h</p>
+        <p>Experiență necesară: {route.minExperience}</p>
+        <p>Vârstă necesară: {route.minAge} ani</p>
+        <p>CMC necesar: {route.minCcm}</p>
       </div>
       <div className="departure">
         <h3>Plecare</h3>
-        <p>Data plecării: {route.departureDate}</p>
-        <p>Ora plecării: {route.departureTime}</p>
-        <p>Plecare din: {route.departureCity}</p>
+        <p>Data plecării: {route.time.split("T")[0]}</p>
+        <p>Ora plecării: {route.time.split("T")[1]}</p>
+        <p>Plecare din: {capitalizeCity(route.departureCity)}</p>
       </div>
       <div className="organizer">
         <h3>Organizator</h3>
-        <p>{route.organizer}</p>
+        <p>{organizer?.name}</p>
       </div>
     </div>
   );

@@ -7,6 +7,7 @@ import { RouterProvider } from "react-router-dom";
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "leaflet/dist/leaflet.css";
 
@@ -25,8 +26,9 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const storage = getStorage(app);
 const auth = getAuth(app);
-export { app, auth, db };
+export { app, auth, db, storage };
 
 export const App = () => {
   return (
@@ -39,4 +41,7 @@ export const App = () => {
     </React.StrictMode>
   );
 };
-ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+const container = document.getElementById("root");
+const root = ReactDOM.createRoot(container);
+
+root.render(<App />);

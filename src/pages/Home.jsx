@@ -17,10 +17,12 @@ import "../CSS/Home.scss";
 const Home = () => {
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state) => state.user);
+  const { ture } = useAppSelector((state) => state.ture);
 
   const handleOpenModal = (type) => {
     dispatch(openModal(type));
   };
+
   useEffect(() => {
     dispatch(fetchAllTure());
   }, []);
@@ -69,23 +71,28 @@ const Home = () => {
         <h2>Ultimele ture</h2>
 
         <div className="row">
-          {[1, 2, 3].map((item, index) => {
+          {ture.map((route, index) => {
             return index === 0 ? (
               <div
-                key={index}
+                key={route.id}
                 className="special_route col-12 col-lg-6 px-3 pt-2"
               >
-                <CardRuta key={index} isSpecial={index === 0 ? true : false} />
+                <CardRuta
+                  key={route.id}
+                  route={route}
+                  isSpecial={index === 0 ? true : false}
+                />
               </div>
             ) : null;
           })}
 
           <div className="col-12 col-lg-6 px-3 pb-5">
-            {[1, 2, 3].map((item, index) => {
-              return index !== 0 ? (
-                <div key={index} className="pt-2">
+            {ture.map((route, index) => {
+              return index !== 0 && index <= 2 ? (
+                <div key={route.id} className="pt-2">
                   <CardRuta
-                    key={index}
+                    key={route.id}
+                    route={route}
                     isSpecial={index === 0 ? true : false}
                   />
                 </div>

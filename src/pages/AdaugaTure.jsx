@@ -8,13 +8,14 @@ import {
 } from "react-leaflet";
 import axios from "axios";
 import L from "leaflet";
-import 'leaflet/dist/leaflet.css';
+import "leaflet/dist/leaflet.css";
 import "../CSS/AdaugaTure.scss";
 import { createNewTura } from "../features/tureSlice";
-import { useAppDispatch } from "../app/hooks";
+import { useAppDispatch, useAppSelector } from "../app/hooks";
 
 const AdaugaTure = () => {
   const dispatch = useAppDispatch();
+  const user = useAppSelector((state) => state.user.user);
   const [points, setPoints] = useState([]);
   const [route, setRoute] = useState([]);
   const [distance, setDistance] = useState(0);
@@ -31,9 +32,9 @@ const AdaugaTure = () => {
     preferredEquipment: "",
     cost: 0,
     km: 0,
-    arrivalCity:"",
-    departureCity:"",
-    intermediateCities: [""]
+    arrivalCity: "",
+    departureCity: "",
+    intermediateCities: [""],
   });
 
   const handleChangeForm = (e) => {
@@ -61,7 +62,9 @@ const AdaugaTure = () => {
   };
 
   const handleRemoveCity = (index) => {
-    const newCities = dataRoute.intermediateCities.filter((_, i) => i !== index);
+    const newCities = dataRoute.intermediateCities.filter(
+      (_, i) => i !== index
+    );
     setDataRoute((prevDataRoute) => ({
       ...prevDataRoute,
       intermediateCities: newCities,
@@ -79,7 +82,7 @@ const AdaugaTure = () => {
       }
       return { lng: coordinates[0], lat: coordinates[1] };
     } catch (error) {
-      console.error("Error fetching geocoding:", error);
+      console.error(`Error fetching geocoding for city: ${city}`, error);
       return null;
     }
   };
@@ -99,13 +102,20 @@ const AdaugaTure = () => {
       );
       return { routeCoordinates, distanceInMeters };
     } catch (error) {
-      console.error("Error fetching route:", error);
+      console.error(
+        `Error fetching route from ${start.lng},${start.lat} to ${end.lng},${end.lat}`,
+        error
+      );
       return null;
     }
   };
 
   const updateRoute = async () => {
-    const allCities = [dataRoute.departureCity, ...dataRoute.intermediateCities, dataRoute.arrivalCity];
+    const allCities = [
+      dataRoute.departureCity,
+      ...dataRoute.intermediateCities,
+      dataRoute.arrivalCity,
+    ];
     const pointsPromises = allCities.map((city) => fetchGeocoding(city));
     const newPoints = await Promise.all(pointsPromises);
     const validPoints = newPoints.filter((point) => point !== null);
@@ -118,6 +128,9 @@ const AdaugaTure = () => {
         if (result) {
           totalRoute = totalRoute.concat(result.routeCoordinates);
           totalDistance += result.distanceInMeters;
+        } else {
+          console.error("Error fetching route, stopping further calculations.");
+          return;
         }
       }
       setRoute(totalRoute);
@@ -129,7 +142,6 @@ const AdaugaTure = () => {
         km: distanceInKm,
         cost: calculatedCost,
       }));
-      saveCostToDatabase(calculatedCost, distanceInKm, dataRoute.departureCity, dataRoute.intermediateCities, dataRoute.arrivalCity);
     } else {
       console.error("Not enough valid points to calculate route.");
     }
@@ -139,48 +151,53 @@ const AdaugaTure = () => {
     if (dataRoute.departureCity && dataRoute.arrivalCity) {
       updateRoute();
     }
-  }, [dataRoute.departureCity, dataRoute.arrivalCity, dataRoute.intermediateCities]);
+  }, [
+    dataRoute.departureCity,
+    dataRoute.arrivalCity,
+    dataRoute.intermediateCities,
+  ]);
 
-  const handleAddTura = (e) => {
+  const handleAddTura = async (e) => {
     e.preventDefault();
-    dispatch(createNewTura(dataRoute));
-    setDataRoute({
-      part_type: "",
-      time: "",
-      start_place: "",
-      description: "",
-      duration: "",
-      cruisingSpeed: "",
-      minAge: "",
-      minCcm: "",
-      minExperience: "",
-      preferredEquipment: "",
-      cost: 0,
-      km: 0,
-      intermediateCities: [""],
-      arrivalCity:"",
-      departureCity:""
-    });
-  };
-
-  const saveCostToDatabase = async (cost, km, departureCity, intermediateCities, arrivalCity) => {
-    try {
-      const response = await fetch('/your-api-endpoint', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ cost, km, departureCity, intermediateCities, arrivalCity }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
+    for (let key in dataRoute) {
+      if (dataRoute[key] === "" || dataRoute[key] === null) {
+        alert("All fields must be filled before submission");
+        return;
       }
+    }
+    if (!user || !user.uid) {
+      alert("You must be logged in to create a tour");
+      return;
+    }
 
-      const result = await response.json();
-      console.log('Cost, km, and cities saved:', result);
+    try {
+      dispatch(
+        createNewTura({
+          ...dataRoute,
+          cost: Math.floor(dataRoute.cost),
+          km: Math.floor(dataRoute.km),
+          createdBy: user.uid,
+        })
+      );
+      setDataRoute({
+        part_type: "",
+        time: "",
+        start_place: "",
+        description: "",
+        duration: "",
+        cruisingSpeed: "",
+        minAge: "",
+        minCcm: "",
+        minExperience: "",
+        preferredEquipment: "",
+        cost: 0,
+        km: 0,
+        intermediateCities: [""],
+        arrivalCity: "",
+        departureCity: "",
+      });
     } catch (error) {
-      console.error('Error saving cost, km, and cities:', error);
+      console.error("Error creating tour:", error);
     }
   };
 
@@ -217,7 +234,9 @@ const AdaugaTure = () => {
             >
               <option value="">Selectează tipul turei</option>
               <option value="Participare liberă">Participare liberă</option>
-              <option value="Participare cu înscriere">Participare cu înscriere</option>
+              <option value="Participare cu înscriere">
+                Participare cu înscriere
+              </option>
             </select>
           </div>
           <div className="form-group mb-3">
@@ -278,7 +297,9 @@ const AdaugaTure = () => {
             <label htmlFor="approximateCost">Cost aproximativ (RON)</label>
             <div className="input-group">
               {distance && dataRoute.cost && (
-                <label className="form-control">{dataRoute.cost.toFixed(2)}</label>
+                <label className="form-control">
+                  {dataRoute.cost.toFixed(0)}
+                </label>
               )}
             </div>
           </div>
@@ -286,7 +307,9 @@ const AdaugaTure = () => {
             <label htmlFor="km">Kilometraj (km)</label>
             <div className="input-group">
               {distance && dataRoute.cost && (
-                <label className="form-control">{dataRoute.km.toFixed(2)}</label>
+                <label className="form-control">
+                  {dataRoute.km.toFixed(0)}
+                </label>
               )}
             </div>
           </div>
@@ -357,55 +380,55 @@ const AdaugaTure = () => {
             ></textarea>
           </div>
           <div className="form-group mb-3">
-  <label htmlFor="departureCity">Orașul de plecare</label>
-  <input
-    type="text"
-    className="form-control"
-    id="departureCity"
-    placeholder="Orașul de plecare"
-    required="req"
-    name="departureCity"
-    value={dataRoute.departureCity}
-    onChange={handleChangeForm}
-  />
-</div>
-{dataRoute.intermediateCities.map((city, index) => (
-  <div className="form-group mb-3" key={index}>
-    <label htmlFor={`intermediateCity${index}`}>
-      Oraș intermediar #{index + 1}
-    </label>
-    <input
-      type="text"
-      className="form-control"
-      required="req"
-      id={`intermediateCity${index}`}
-      placeholder={`Oraș intermediar`}
-      name="intermediateCity"
-      value={city}
-      onChange={(e) => handleCityChange(e, index)}
-    />
-    <button
-      type="button"
-      className="mt-2 px-2 form_btn_adauga_ture"
-      onClick={() => handleRemoveCity(index)}
-    >
-      Remove
-    </button>
-  </div>
-))}
-<div className="form-group mb-3">
-  <label htmlFor="arrivalCity">Orașul de sosire</label>
-  <input
-    type="text"
-    className="form-control"
-    id="arrivalCity"
-    placeholder="Orașul de sosire"
-    required="req"
-    name="arrivalCity"
-    value={dataRoute.arrivalCity}
-    onChange={handleChangeForm}
-  />
-</div>
+            <label htmlFor="departureCity">Orașul de plecare</label>
+            <input
+              type="text"
+              className="form-control"
+              id="departureCity"
+              placeholder="Orașul de plecare"
+              required="req"
+              name="departureCity"
+              value={dataRoute.departureCity}
+              onChange={handleChangeForm}
+            />
+          </div>
+          {dataRoute.intermediateCities.map((city, index) => (
+            <div className="form-group mb-3" key={index}>
+              <label htmlFor={`intermediateCity${index}`}>
+                Oraș intermediar #{index + 1}
+              </label>
+              <input
+                type="text"
+                className="form-control"
+                required="req"
+                id={`intermediateCity${index}`}
+                placeholder={`Oraș intermediar`}
+                name="intermediateCity"
+                value={city}
+                onChange={(e) => handleCityChange(e, index)}
+              />
+              <button
+                type="button"
+                className="mt-2 px-2 form_btn_adauga_ture"
+                onClick={() => handleRemoveCity(index)}
+              >
+                Remove
+              </button>
+            </div>
+          ))}
+          <div className="form-group mb-3">
+            <label htmlFor="arrivalCity">Orașul de sosire</label>
+            <input
+              type="text"
+              className="form-control"
+              id="arrivalCity"
+              placeholder="Orașul de sosire"
+              required="req"
+              name="arrivalCity"
+              value={dataRoute.arrivalCity}
+              onChange={handleChangeForm}
+            />
+          </div>
           <button
             type="button"
             className="mb-3 px-2 form_btn_adauga_ture"

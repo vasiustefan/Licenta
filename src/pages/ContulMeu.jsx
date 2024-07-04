@@ -1,32 +1,47 @@
-import { FaMotorcycle, FaPhone, FaEnvelope, FaClock } from "react-icons/fa";
+import { useEffect, useState } from "react";
+import { FaMotorcycle, FaPhone, FaEnvelope } from "react-icons/fa";
 import { Routes } from "../router";
 import { Link } from "react-router-dom";
+import { collection, query, where, getDocs } from "firebase/firestore";
+import { db } from "../main";
 import "../CSS/ContulMeu.scss";
+import { useAppSelector } from "../app/hooks";
+import { CardRuta } from "../components/CardRuta"; // Import CardRuta component
 
 const ContulMeu = () => {
-  const user = {
-    username: "BaBanu",
-    memberSince: "12-11-2023",
-    birthYear: 2000,
-    city: "Sibiu",
-    moto: "Honda Shadow",
-    cmc: 600,
-    extraEquipment: "Nu detin echipament extra",
-    participations: 0,
-    activeStatus: "Acum 0s",
-    phone: "Privat",
-    email: "Privat",
-  };
+  const user = useAppSelector((state) => state.user.user);
+  const [userTours, setUserTours] = useState([]);
+
+  useEffect(() => {
+    const fetchUserTours = async () => {
+      if (user && user.uid) {
+        const q = query(
+          collection(db, "ture"),
+          where("createdBy", "==", user.uid)
+        );
+        const querySnapshot = await getDocs(q);
+        const tours = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setUserTours(tours);
+      }
+    };
+
+    if (user && user.uid) {
+      fetchUserTours();
+    }
+  }, [user]);
+
+  if (!user) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="contul_meu_container">
       <div className="user_info">
         <div className="profile_picture">
           <FaMotorcycle size="100%" color="#fd390e" />
-        </div>
-        <div className="user_details">
-          <h2>{user.username}</h2>
-          <p>Membru din: {user.memberSince}</p>
         </div>
       </div>
 
@@ -49,15 +64,16 @@ const ContulMeu = () => {
       </div>
 
       <div className="participations">
-        <h3>Participări la ture: {user.participations}</h3>
-        <p>Nu s-a găsit nici o participare.</p>
+        <h3>Ture create: </h3>
+        {userTours.length > 0 ? (
+          userTours.map((tour, index) => <CardRuta key={index} route={tour} />)
+        ) : (
+          <p>Nu s-a găsit nici o participare.</p>
+        )}
       </div>
 
       <div className="contact_info">
         <h4>Informații</h4>
-        <p>
-          <FaClock /> Activ: {user.activeStatus}
-        </p>
         <p>
           <FaPhone /> Telefon: {user.phone}
         </p>

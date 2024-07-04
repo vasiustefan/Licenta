@@ -84,6 +84,13 @@ export const Navbar = () => {
             ) : (
               <>
                 <li className="nav-item p-1 m-1">
+                  <button className="btn btn-outline-danger d-flex align-items-center justify-content-center mt-2">
+                    <Link to={Routes.AdaugaTure}>
+                      <FaPlus className="me-2" /> Adauga ruta
+                    </Link>
+                  </button>
+                </li>
+                <li className="nav-item p-1 m-1">
                   <button
                     className="btn btn-outline-danger d-flex align-items-center justify-content-center mt-2"
                     onClick={handleLogout}
