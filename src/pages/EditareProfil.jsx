@@ -5,11 +5,9 @@ import { doc, updateDoc } from "firebase/firestore"; // Import Firestore functio
 import bikerImg from "../images/biker.avif";
 import "../CSS/EditareProfil.scss";
 import { fetchUser } from "../features/userSlice";
-
 const EditareProfil = () => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.user); // Get the current user from the Redux store
-
   const [profile, setProfile] = useState({
     email: "",
     name: "",
@@ -22,13 +20,11 @@ const EditareProfil = () => {
     extraEquipment: "",
     memberSince: "",
   });
-
   useEffect(() => {
     if (user && user.uid && !user.name) {
       dispatch(fetchUser(user.uid));
     }
   }, [dispatch, user]);
-
   useEffect(() => {
     if (user && user.uid) {
       setProfile({
@@ -45,12 +41,10 @@ const EditareProfil = () => {
       });
     }
   }, [user]);
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setProfile((prevProfile) => ({ ...prevProfile, [name]: value }));
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!user || !user.uid) {
@@ -69,13 +63,11 @@ const EditareProfil = () => {
         experience: profile.experience,
         extraEquipment: profile.extraEquipment,
       });
-
       console.log("Profile updated:", profile);
     } catch (error) {
       console.error("Error updating profile:", error);
     }
   };
-
   const getFormattedDate = (dateString) => {
     if (!dateString) return "Unknown Date";
     const date = new Date(dateString);
@@ -85,7 +77,6 @@ const EditareProfil = () => {
     const year = date.getFullYear();
     return `${day} ${month} ${year}`;
   };
-
   profile.memberSince = getFormattedDate(profile.memberSince);
   return (
     <div className="container editare_profil_form my-4 p-4 rounded">
@@ -232,5 +223,4 @@ const EditareProfil = () => {
     </div>
   );
 };
-
 export default EditareProfil;

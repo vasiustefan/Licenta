@@ -68,7 +68,7 @@ const Home = () => {
         </div>
       </div>
       <div className="px-3 pt-2 pb-5 last_routes">
-        <h2>Ultimele ture</h2>
+        <h2>Cele mai recente ture</h2>
 
         <div className="row">
           {ture.map((route, index) => {

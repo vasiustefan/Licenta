@@ -67,8 +67,13 @@
       font-size: 1.1rem;
       color: #b5b5b5;
     }
+    .tour-item {
+      .btn {
+        width: fit-content;
+        position: relative;
+      }
+    }
   }
-
   .contact_info {
     margin-top: 20px;
 

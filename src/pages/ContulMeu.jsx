@@ -1,8 +1,15 @@
 import { useEffect, useState } from "react";
-import { FaMotorcycle, FaPhone, FaEnvelope } from "react-icons/fa";
+import { FaMotorcycle, FaPhone, FaEnvelope, FaTrash } from "react-icons/fa";
 import { Routes } from "../router";
 import { Link } from "react-router-dom";
-import { collection, query, where, getDocs } from "firebase/firestore";
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+  doc,
+  deleteDoc,
+} from "firebase/firestore";
 import { db } from "../main";
 import "../CSS/ContulMeu.scss";
 import { useAppSelector } from "../app/hooks";
@@ -32,6 +39,15 @@ const ContulMeu = () => {
       fetchUserTours();
     }
   }, [user]);
+
+  const handleDelete = async (id) => {
+    try {
+      await deleteDoc(doc(db, "ture", id));
+      setUserTours((prevTours) => prevTours.filter((tour) => tour.id !== id));
+    } catch (error) {
+      console.error("Error deleting tour:", error);
+    }
+  };
 
   if (!user) {
     return <div>Loading...</div>;
@@ -76,7 +92,20 @@ const ContulMeu = () => {
       <div className="participations">
         <h3>Ture create: </h3>
         {userTours.length > 0 ? (
-          userTours.map((tour, index) => <CardRuta key={index} route={tour} />)
+          userTours.map((tour, index) => (
+            <div
+              key={index}
+              className="tour-item d-flex my-2 justify-content-between"
+            >
+              <CardRuta route={tour} />
+              <button
+                className="btn btn-danger"
+                onClick={() => handleDelete(tour.id)}
+              >
+                <FaTrash /> Delete
+              </button>
+            </div>
+          ))
         ) : (
           <p>Nu s-a găsit nici o participare.</p>
         )}

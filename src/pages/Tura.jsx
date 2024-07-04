@@ -9,9 +9,10 @@ import {
 } from "react-leaflet";
 import axios from "axios";
 import L from "leaflet";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../main";
-import "../CSS/Tura.scss"; // Ensure this file is styled appropriately
+import "../CSS/Tura.scss";
+import { useAppSelector } from "../app/hooks";
 
 const Tura = () => {
   const { id } = useParams();
@@ -19,6 +20,8 @@ const Tura = () => {
   const [points, setPoints] = useState([]);
   const [routeCoordinates, setRouteCoordinates] = useState([]);
   const [organizer, setOrganizer] = useState(null);
+  const user = useAppSelector((state) => state.user.user);
+  const [hasParticipated, setHasParticipated] = useState(false);
 
   useEffect(() => {
     const fetchRoute = async () => {
@@ -117,6 +120,36 @@ const Tura = () => {
     return city.charAt(0).toUpperCase() + city.slice(1).toLowerCase();
   };
 
+  const handleParticipate = async () => {
+    if (!user || !user.uid) {
+      console.error("User is not authenticated");
+      return;
+    }
+    try {
+      const routeDocRef = doc(db, "ture", id);
+
+      const routeDoc = await getDoc(routeDocRef);
+      if (!routeDoc.exists()) {
+        console.error("Route not found");
+        return;
+      }
+
+      const currentParticipants = routeDoc.data().participants || 0;
+
+      await updateDoc(routeDocRef, {
+        participants: currentParticipants + 1,
+      });
+
+      setRoute((prevRoute) => ({
+        ...prevRoute,
+        participants: currentParticipants + 1,
+      }));
+      setHasParticipated(true);
+    } catch (error) {
+      console.error("Error updating participants:", error);
+    }
+  };
+
   if (!route) {
     return <div>Loading...</div>;
   }
@@ -185,6 +218,19 @@ const Tura = () => {
         <h3>Organizator</h3>
         <p>{organizer?.name}</p>
       </div>
+      {user && !hasParticipated && (
+        <div className="participate">
+          <button className="btn btn-primary" onClick={handleParticipate}>
+            Participate
+          </button>
+          <p>Participants: {route.participants}</p>
+        </div>
+      )}
+      {user && hasParticipated && (
+        <div className="participate">
+          <p>You have participated. Participants: {route.participants}</p>
+        </div>
+      )}
     </div>
   );
 };

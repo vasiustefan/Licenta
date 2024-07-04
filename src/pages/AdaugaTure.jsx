@@ -177,6 +177,8 @@ const AdaugaTure = () => {
           cost: Math.floor(dataRoute.cost),
           km: Math.floor(dataRoute.km),
           createdBy: user.uid,
+          participants: 1,
+          status: "Tura deschisa",
         })
       );
       setDataRoute({
