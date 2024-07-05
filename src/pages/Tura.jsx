@@ -9,7 +9,7 @@ import {
 } from "react-leaflet";
 import axios from "axios";
 import L from "leaflet";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc, arrayUnion } from "firebase/firestore";
 import { db } from "../main";
 import "../CSS/Tura.scss";
 import { useAppSelector } from "../app/hooks";
@@ -69,8 +69,21 @@ const Tura = () => {
         console.error("Error fetching route details:", error);
       }
     };
+    const checkParticipation = async () => {
+      if (user) {
+        const userDoc = await getDoc(doc(db, "users", user.uid));
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          if (userData.participatedTours?.includes(id)) {
+            setHasParticipated(true);
+          }
+        }
+      }
+    };
+
     fetchRoute();
-  }, [id]);
+    checkParticipation();
+  }, [id, user]);
 
   const fetchGeocoding = async (city) => {
     const apiKey = "5b3ce3597851110001cf6248d4eb3313e121466aaf1357d615d4ba59";
@@ -140,6 +153,10 @@ const Tura = () => {
         participants: currentParticipants + 1,
       });
 
+      await updateDoc(doc(db, "users", user.uid), {
+        participatedTours: arrayUnion(id),
+      });
+
       setRoute((prevRoute) => ({
         ...prevRoute,
         participants: currentParticipants + 1,
@@ -162,11 +179,10 @@ const Tura = () => {
         <h2 className="mx-2">-&gt;</h2>
         {route.intermediateCities &&
           route.intermediateCities.map((city, index) => (
-            <h2 key={index}>{`${capitalizeCity(city)} -&gt;`}</h2>
+            <h2 key={index}>{`${capitalizeCity(city)} `}-&gt;</h2>
           ))}
         <h2 className="mx-2">{capitalizeCity(route.arrivalCity)}</h2>
       </div>
-
       <div className="map-container">
         <MapContainer
           center={[46.77, 23.59]}
@@ -200,7 +216,7 @@ const Tura = () => {
         <h3>Detalii de participare</h3>
         <p>Distanță aproximativă: {route.km} km</p>
         <p>
-          Durata: {route.duration} {route.duration === 1 ? "zi" : "zile"}
+          Durata: {route.duration} {route.duration != 1 ? "zile" : "zi"}
         </p>
         <p>Cost estimativ: {route.cost} RON</p>
         <p>Viteza de croazieră: {route.cruisingSpeed} km/h</p>
@@ -218,17 +234,25 @@ const Tura = () => {
         <h3>Organizator</h3>
         <p>{organizer?.name}</p>
       </div>
-      {user && !hasParticipated && (
+      {user && !hasParticipated && route.status === "Tura Deschisa" && (
         <div className="participate">
+          <p>Participanti: {route.participants}</p>
           <button className="btn btn-primary" onClick={handleParticipate}>
-            Participate
+            Participă
           </button>
-          <p>Participants: {route.participants}</p>
+        </div>
+      )}
+      {!user && (
+        <div className="participate">
+          <p>Participanti: {route.participants}</p>
+          <button className="btn btn-primary">
+            Trebuie să te conectezi ca să poți participa
+          </button>
         </div>
       )}
       {user && hasParticipated && (
         <div className="participate">
-          <p>You have participated. Participants: {route.participants}</p>
+          <p>Participi la aceasta cursa! Participanti: {route.participants}</p>
         </div>
       )}
     </div>

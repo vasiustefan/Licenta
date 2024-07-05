@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { FaMotorcycle, FaPhone, FaEnvelope, FaTrash } from "react-icons/fa";
 import { Routes } from "../router";
 import { Link } from "react-router-dom";
+import { fetchUser } from "../features/userSlice";
+import { useDispatch } from "react-redux";
 import {
   collection,
   query,
@@ -16,8 +18,15 @@ import { useAppSelector } from "../app/hooks";
 import { CardRuta } from "../components/CardRuta"; // Import CardRuta component
 
 const ContulMeu = () => {
+  const dispatch = useDispatch();
   const user = useAppSelector((state) => state.user.user);
   const [userTours, setUserTours] = useState([]);
+
+  useEffect(() => {
+    if (user && user.uid && !user.name) {
+      dispatch(fetchUser(user.uid));
+    }
+  }, [dispatch, user]);
 
   useEffect(() => {
     const fetchUserTours = async () => {

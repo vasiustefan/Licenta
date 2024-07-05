@@ -12,6 +12,8 @@ import "leaflet/dist/leaflet.css";
 import "../CSS/AdaugaTure.scss";
 import { createNewTura } from "../features/tureSlice";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
+import { doc, updateDoc, arrayUnion } from "firebase/firestore";
+import { db } from "../main";
 
 const AdaugaTure = () => {
   const dispatch = useAppDispatch();
@@ -159,19 +161,13 @@ const AdaugaTure = () => {
 
   const handleAddTura = async (e) => {
     e.preventDefault();
-    for (let key in dataRoute) {
-      if (dataRoute[key] === "" || dataRoute[key] === null) {
-        alert("All fields must be filled before submission");
-        return;
-      }
-    }
     if (!user || !user.uid) {
       alert("You must be logged in to create a tour");
       return;
     }
 
     try {
-      dispatch(
+      const newTourRef = await dispatch(
         createNewTura({
           ...dataRoute,
           cost: Math.floor(dataRoute.cost),
@@ -180,7 +176,10 @@ const AdaugaTure = () => {
           participants: 1,
           status: "Tura deschisa",
         })
-      );
+      ).unwrap();
+      await updateDoc(doc(db, "users", user.uid), {
+        participatedTours: arrayUnion(newTourRef.id), // Update user's participatedTours
+      });
       setDataRoute({
         part_type: "",
         time: "",
@@ -277,7 +276,6 @@ const AdaugaTure = () => {
               name="description"
               value={dataRoute.description}
               onChange={handleChangeForm}
-              required="req"
             ></textarea>
           </div>
           <div className="form-group mb-3">
@@ -362,7 +360,6 @@ const AdaugaTure = () => {
               name="minExperience"
               value={dataRoute.minExperience}
               onChange={handleChangeForm}
-              required="req"
             >
               <option value="">-- Alege o opțiune --</option>
               <option value="Începător">Începător</option>

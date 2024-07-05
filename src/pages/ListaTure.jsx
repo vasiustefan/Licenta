@@ -27,58 +27,60 @@ const ListaTure = () => {
     dispatch(fetchAllTure());
   }, [dispatch]);
 
+  useEffect(() => {
+    setFilteredRoutes(ture);
+  }, [ture]);
+
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    if (type === "checkbox") {
-      setFilters((prevFilters) => ({
-        ...prevFilters,
-        cmc: checked
-          ? [...prevFilters.cmc, value]
-          : prevFilters.cmc.filter((cmc) => cmc !== value),
-      }));
-    } else {
-      setFilters((prevFilters) => ({ ...prevFilters, [name]: value }));
-    }
+    const { name, value } = e.target;
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      [name]: value,
+    }));
   };
 
   const handleApplyFilters = () => {
     let filtered = ture;
 
     if (filters.city) {
-      filtered = filtered.filter(
-        (route) =>
-          route.departureCity
-            .toLowerCase()
-            .includes(filters.city.toLowerCase()) ||
-          route.arrivalCity
-            .toLowerCase()
-            .includes(filters.city.toLowerCase()) ||
-          route.intermediateCities.some((city) =>
-            city.toLowerCase().includes(filters.city.toLowerCase())
-          )
+      filtered = filtered.filter((route) =>
+        route.departureCity.toLowerCase().includes(filters.city.toLowerCase())
       );
     }
 
-    if (filters.distanceMin || filters.distanceMax) {
+    if (filters.distanceMin) {
       filtered = filtered.filter(
-        (route) =>
-          route.km >= filters.distanceMin && route.km <= filters.distanceMax
+        (route) => route.km >= parseFloat(filters.distanceMin)
       );
     }
 
-    if (filters.cmcMin || filters.cmcMax) {
+    if (filters.distanceMax) {
       filtered = filtered.filter(
-        (route) =>
-          parseInt(route.cmc) >= filters.cmcMin &&
-          parseInt(route.cmc) <= filters.cmcMax
+        (route) => route.km <= parseFloat(filters.distanceMax)
       );
     }
 
-    if (filters.ageMin || filters.ageMax) {
+    if (filters.cmcMin) {
       filtered = filtered.filter(
-        (route) =>
-          parseInt(route.minAge) >= filters.ageMin &&
-          parseInt(route.minAge) <= filters.ageMax
+        (route) => parseInt(route.minCcm) >= parseInt(filters.cmcMin)
+      );
+    }
+
+    if (filters.cmcMax) {
+      filtered = filtered.filter(
+        (route) => parseInt(route.minCcm) <= parseInt(filters.cmcMax)
+      );
+    }
+
+    if (filters.ageMin) {
+      filtered = filtered.filter(
+        (route) => parseInt(route.minAge) >= parseInt(filters.ageMin)
+      );
+    }
+
+    if (filters.ageMax) {
+      filtered = filtered.filter(
+        (route) => parseInt(route.minAge) <= parseInt(filters.ageMax)
       );
     }
 
@@ -88,20 +90,33 @@ const ListaTure = () => {
       );
     }
 
-    if (filters.costMin || filters.costMax) {
+    if (filters.costMin) {
       filtered = filtered.filter(
-        (route) =>
-          route.cost >= filters.costMin && route.cost <= filters.costMax
+        (route) => route.cost >= parseFloat(filters.costMin)
+      );
+    }
+
+    if (filters.costMax) {
+      filtered = filtered.filter(
+        (route) => route.cost <= parseFloat(filters.costMax)
       );
     }
 
     setFilteredRoutes(filtered);
     setShowFilters(false);
+    setFilters({
+      city: "",
+      distanceMin: "",
+      distanceMax: "",
+      cmcMin: "",
+      cmcMax: "",
+      ageMin: "",
+      ageMax: "",
+      experience: "any",
+      costMin: 0,
+      costMax: 7000,
+    });
   };
-
-  useEffect(() => {
-    setFilteredRoutes(ture);
-  }, [ture]);
 
   return (
     <div className="lista_ture">
@@ -187,7 +202,7 @@ const ListaTure = () => {
             value={filters.experience}
             onChange={handleChange}
           >
-            <option value="">-- Alege o opțiune --</option>
+            <option value="any">-- Alege o opțiune --</option>
             <option value="Începător">Începător</option>
             <option value="Intermediar">Intermediar</option>
             <option value="Avansat">Avansat</option>
@@ -196,18 +211,16 @@ const ListaTure = () => {
         <div className="filter-group mb-3">
           <label className="mb-2">Cost aproximativ</label>
           <input
-            type="range"
+            type="number"
             name="costMin"
-            min="0"
-            max="7000"
+            placeholder="Min"
             value={filters.costMin}
             onChange={handleChange}
           />
           <input
-            type="range"
+            type="number"
             name="costMax"
-            min="0"
-            max="7000"
+            placeholder="Max"
             value={filters.costMax}
             onChange={handleChange}
           />

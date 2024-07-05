@@ -5,7 +5,7 @@ import { IoPeople } from "react-icons/io5";
 import { FaRegClock, FaMotorcycle } from "react-icons/fa";
 import { TbAward } from "react-icons/tb";
 import { useNavigate } from "react-router-dom";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../main";
 import bikerImg from "../images/biker.avif";
 
@@ -49,8 +49,17 @@ export const CardRuta = ({ isSpecial = false, route = {} }) => {
       }
     };
 
+    const updateRouteStatus = async () => {
+      const status = getStatus(route.time);
+      if (route.id) {
+        const routeDoc = doc(db, "ture", route.id);
+        await updateDoc(routeDoc, { status: status.text });
+      }
+    };
+
+    updateRouteStatus();
     fetchUserDetails();
-  }, [route.createdBy]);
+  }, [route.createdBy, route.time, route.id]);
 
   const capitalizedDepartureCity = capitalizeFirstLetter(route.departureCity);
   const capitalizedArrivalCity = capitalizeFirstLetter(route.arrivalCity);
@@ -112,7 +121,10 @@ export const CardRuta = ({ isSpecial = false, route = {} }) => {
               <p>
                 <FaRegClock className="card_icons_bottom" />
               </p>
-              <p>{route.duration} ZI</p>
+              <p>
+                {route.duration}
+                {route.duration != 1 ? " Zile" : " Zi"}
+              </p>
             </div>
             <div className="me-1 mt-3 text-center card_parameters">
               <p>

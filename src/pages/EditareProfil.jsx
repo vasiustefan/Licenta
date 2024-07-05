@@ -1,13 +1,26 @@
 import { useEffect, useState } from "react";
-import { db } from "../main";
+import { db, auth } from "../main";
 import { useDispatch, useSelector } from "react-redux";
-import { doc, updateDoc } from "firebase/firestore"; // Import Firestore functions
+import {
+  doc,
+  updateDoc,
+  deleteDoc,
+  collection,
+  query,
+  where,
+  getDocs,
+  writeBatch,
+} from "firebase/firestore";
+import { deleteUser } from "firebase/auth";
+import { useNavigate } from "react-router-dom";
 import bikerImg from "../images/biker.avif";
 import "../CSS/EditareProfil.scss";
-import { fetchUser } from "../features/userSlice";
+import { fetchUser, signOutUser } from "../features/userSlice";
 const EditareProfil = () => {
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.user.user); // Get the current user from the Redux store
+  const user = useSelector((state) => state.user.user);
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState({
     email: "",
     name: "",
@@ -27,7 +40,8 @@ const EditareProfil = () => {
   }, [dispatch, user]);
   useEffect(() => {
     if (user && user.uid) {
-      setProfile({
+      setProfile((prevProfile) => ({
+        ...prevProfile,
         email: user.email || "",
         name: user.name || "",
         phone: user.phone || "",
@@ -38,12 +52,16 @@ const EditareProfil = () => {
         experience: user.experience || "",
         extraEquipment: user.extraEquipment || "",
         memberSince: user.memberSince || "",
-      });
+      }));
+      setLoading(false);
     }
-  }, [user]);
+  }, [user.uid]);
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setProfile((prevProfile) => ({ ...prevProfile, [name]: value }));
+    setProfile((prevProfile) => {
+      const updatedProfile = { ...prevProfile, [name]: value };
+      return updatedProfile;
+    });
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -68,6 +86,39 @@ const EditareProfil = () => {
       console.error("Error updating profile:", error);
     }
   };
+  const handleDeleteAccount = async () => {
+    if (!user || !user.uid) {
+      console.error("User is not logged in or user ID is undefined");
+      return;
+    }
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete your account? This action cannot be undone."
+    );
+    if (!confirmDelete) return;
+    const toursQuery = query(
+      collection(db, "ture"),
+      where("createdBy", "==", user.uid)
+    );
+    const toursSnapshot = await getDocs(toursQuery);
+    const batch = writeBatch(db);
+    toursSnapshot.forEach((doc) => {
+      batch.delete(doc.ref);
+    });
+    await batch.commit();
+    try {
+      const userDocRef = doc(db, "users", user.uid);
+      await deleteDoc(userDocRef);
+      const userAuth = auth.currentUser;
+      await deleteUser(userAuth);
+      dispatch(signOutUser());
+      console.log("Account deleted successfully");
+      navigate("/");
+      window.location.reload();
+    } catch (error) {
+      console.error("Error deleting account:", error);
+      alert("Error deleting account. Please try again.");
+    }
+  };
   const getFormattedDate = (dateString) => {
     if (!dateString) return "Unknown Date";
     const date = new Date(dateString);
@@ -78,6 +129,9 @@ const EditareProfil = () => {
     return `${day} ${month} ${year}`;
   };
   profile.memberSince = getFormattedDate(profile.memberSince);
+  if (loading) {
+    return <div>Loading...</div>;
+  }
   return (
     <div className="container editare_profil_form my-4 p-4 rounded">
       <h2 className="text-center mb-4">Editare date cont</h2>
@@ -201,8 +255,12 @@ const EditareProfil = () => {
               <button type="submit" className="btn btn-primary">
                 Salvează modificările
               </button>
-              <button type="button" className="btn btn-secondary">
-                Sterge contul
+              <button
+                type="button"
+                className="btn btn-danger"
+                onClick={handleDeleteAccount}
+              >
+                Șterge contul
               </button>
             </div>
           </form>
