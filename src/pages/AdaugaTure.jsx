@@ -81,7 +81,7 @@ const AdaugaTure = () => {
   }, []);
 
   const fetchGeocoding = async (city) => {
-    const apiKey = "5b3ce3597851110001cf6248d4eb3313e121466aaf1357d615d4ba59"; // Replace with your OpenRouteService API key
+    const apiKey = "5b3ce3597851110001cf6248d4eb3313e121466aaf1357d615d4ba59";
     const url = `https://api.openrouteservice.org/geocode/search?api_key=${apiKey}&text=${city}`;
     try {
       const response = await axios.get(url);
@@ -97,7 +97,7 @@ const AdaugaTure = () => {
   };
 
   const fetchRoute = async (start, end) => {
-    const apiKey = "5b3ce3597851110001cf6248d4eb3313e121466aaf1357d615d4ba59"; // Replace with your OpenRouteService API key
+    const apiKey = "5b3ce3597851110001cf6248d4eb3313e121466aaf1357d615d4ba59"; 
     const url = `https://api.openrouteservice.org/v2/directions/driving-car?api_key=${apiKey}&start=${start.lng},${start.lat}&end=${end.lng},${end.lat}`;
     try {
       const response = await axios.get(url);
@@ -185,7 +185,7 @@ const AdaugaTure = () => {
         })
       ).unwrap();
       await updateDoc(doc(db, "users", user.uid), {
-        participatedTours: arrayUnion(newTourRef.id), // Update user's participatedTours
+        participatedTours: arrayUnion(newTourRef.id), 
       });
       setDataRoute({
         part_type: "",

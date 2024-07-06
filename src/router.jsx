@@ -1,5 +1,5 @@
 import { createBrowserRouter } from "react-router-dom";
-import { Eroare } from "./components/Eroare"; // Import your Eroare component
+import { Eroare } from "./components/Eroare";
 import Layout from "./pages/Layout";
 import Home from "./pages/Home";
 import ListaTure from "./pages/ListaTure";

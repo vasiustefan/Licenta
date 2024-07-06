@@ -16,7 +16,7 @@ import {
 import { db } from "../main";
 import "../CSS/ContulMeu.scss";
 import { useAppSelector } from "../app/hooks";
-import { CardRuta } from "../components/CardRuta"; // Import CardRuta component
+import { CardRuta } from "../components/CardRuta";
 
 const ContulMeu = () => {
   const dispatch = useDispatch();

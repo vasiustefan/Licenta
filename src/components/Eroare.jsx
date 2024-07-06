@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
-import "../CSS/Eroare.scss"; // Import the stylesheet for styling
-
+import "../CSS/Eroare.scss";
 export const Eroare = () => {
   return (
     <div className="error-container">

@@ -1,5 +1,4 @@
 /* eslint-disable react/prop-types */
-
 import { useAppSelector, useAppDispatch } from "../app/hooks";
 import { closeModal } from "../features/modalSlice";
 

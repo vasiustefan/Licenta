@@ -122,7 +122,7 @@ const EditareProfil = () => {
   const getFormattedDate = (dateString) => {
     if (!dateString) return "Unknown Date";
     const date = new Date(dateString);
-    if (isNaN(date.getTime())) return "Invalid Date"; // Check for invalid date
+    if (isNaN(date.getTime())) return "Invalid Date";
     const day = date.getDate();
     const month = date.toLocaleString("default", { month: "long" });
     const year = date.getFullYear();
