@@ -21,6 +21,7 @@ const AdaugaTure = () => {
   const [points, setPoints] = useState([]);
   const [route, setRoute] = useState([]);
   const [distance, setDistance] = useState(0);
+  const [minDateTime, setMinDateTime] = useState('');
   const [dataRoute, setDataRoute] = useState({
     part_type: "",
     time: "",
@@ -72,6 +73,12 @@ const AdaugaTure = () => {
       intermediateCities: newCities,
     }));
   };
+
+  useEffect(() => {
+    const now = new Date();
+    const formattedDateTime = now.toISOString().slice(0,16);
+    setMinDateTime(formattedDateTime);
+  }, []);
 
   const fetchGeocoding = async (city) => {
     const apiKey = "5b3ce3597851110001cf6248d4eb3313e121466aaf1357d615d4ba59"; // Replace with your OpenRouteService API key
@@ -250,6 +257,7 @@ const AdaugaTure = () => {
               name="time"
               id="startDateTime"
               value={dataRoute.time}
+              min={minDateTime}
               onChange={handleChangeForm}
               required="req"
             />

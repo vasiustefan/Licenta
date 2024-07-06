@@ -6,7 +6,6 @@
   border-radius: 8px;
   max-width: 1450px;
   margin: 20px auto;
-
   .user_info {
     display: flex;
     align-items: center;
@@ -14,13 +13,21 @@
 
     .profile_picture {
       flex: 0 0 150px;
-      height: 150px;
+      height: fit-content;
+      width: 300px;
       background-color: #282435;
       border-radius: 8px;
+      text-align: center;
+      padding: 20px;
       display: flex;
-      align-items: center;
+      flex-direction: column;
       justify-content: center;
-      margin-right: 20px;
+      align-items: center;
+      .avatar {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+      }
     }
 
     .user_details {

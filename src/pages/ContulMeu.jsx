@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { FaMotorcycle, FaPhone, FaEnvelope, FaTrash } from "react-icons/fa";
+import { FaPhone, FaEnvelope, FaTrash } from "react-icons/fa";
+import bikerImg from "../images/biker.avif";
 import { Routes } from "../router";
 import { Link } from "react-router-dom";
 import { fetchUser } from "../features/userSlice";
@@ -75,9 +76,10 @@ const ContulMeu = () => {
     <div className="contul_meu_container">
       <div className="user_info">
         <div className="profile_picture">
-          <FaMotorcycle size="100%" color="#fd390e" />
+          <img src={bikerImg} alt="Avatar" className="avatar" />
+          <span>Nume: {user.name}</span>
+          <span>Membru din: {getFormattedDate(user.memberSince)}</span>
         </div>
-        <span>Membru din: {getFormattedDate(user.memberSince)}</span>
       </div>
 
       <div className="user_bio">
